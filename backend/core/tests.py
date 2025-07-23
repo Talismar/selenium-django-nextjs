@@ -17,6 +17,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 class TaskTests(AppLiveServerTestCase):
     FRONTEND_URL = FRONTEND_URL
     port = 8000
+    host = "0.0.0.0"
     
     @classmethod
     def setUpClass(cls):
@@ -26,10 +27,10 @@ class TaskTests(AppLiveServerTestCase):
             cls.selenium = Remote(command_executor="http://localhost:4444/wd/hub", options=FirefoxOptions())
         else:
             options = Options()
-            if os.environ.get("SELENIUM_HEADLESS") == "True":
-                options.add_argument("--headless")
-
             cls.selenium = WebDriver(options)
+
+        if os.environ.get("SELENIUM_HEADLESS") == "True":
+            options.add_argument("--headless")
 
         cls.selenium.file_detector = LocalFileDetector()
         cls.selenium.implicitly_wait(10)

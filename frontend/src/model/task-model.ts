@@ -15,12 +15,16 @@ type TaskModel = {
 export function useTaskModel({ taskApiService, ...params }: TaskModel) {
   const [tasks, setTasks] = useState<Task[]>(params?.tasks ?? []);
 
+  // useEffect(() => {
+  //   fetchTasks();
+  // }, []);
+
   async function addTask(task: CreateTaskBody) {
     const newTask = await taskApiService.create(task);
     setTasks((prev) => [...prev, newTask]);
   }
 
-  async function getAllTasks() {
+  async function fetchTasks() {
     const tasks = await taskApiService.list();
     setTasks(tasks);
   }
@@ -38,7 +42,6 @@ export function useTaskModel({ taskApiService, ...params }: TaskModel) {
   return {
     tasks,
     addTask,
-    getAllTasks,
     deleteTask,
     updateTask,
   };

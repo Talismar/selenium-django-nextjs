@@ -10,6 +10,8 @@ This project demonstrates integration testing for a Django backend and a Next.js
 - **Frontend:** Next.js application for interacting with tasks.
 - **Testing:** End-to-end tests using Selenium WebDriver (local or remote).
 - **CI:** Automated tests via GitHub Actions.
+- **Selenium Grid:** Easily run tests using Selenium Grid via Docker Compose.
+- **Live Selenium Execution:** When using the `selenium/standalone-firefox` image, you can view the browser execution at [http://localhost:7900/?autoconnect=1&resize=scale&password=secret](http://localhost:7900/?autoconnect=1&resize=scale&password=secret).
 
 ---
 
@@ -88,17 +90,29 @@ Replace `<YOUR_IP>` with the IP from step 2.
 
 ---
 
-## Selenium Remote WebDriver
+## Selenium Grid & Remote WebDriver
 
-To run tests with Selenium Remote, you need a Selenium server. You can use Docker:
+You can run Selenium Grid using Docker Compose. The provided `docker-compose.yml` includes the `selenium/standalone-firefox` service:
+
+```yaml
+services:
+  selenium:
+    image: selenium/standalone-firefox
+    ports:
+      - 4444:4444
+      - 7900:7900
+```
+
+Start Selenium Grid:
 
 ```sh
-docker run -p 4444:4444 selenium/standalone-firefox
-
-# or
-
 docker compose up -d
 ```
+
+- **WebDriver URL:** `http://localhost:4444/wd/hub`
+- **Live Browser View:** [http://localhost:7900/?autoconnect=1&resize=scale&password=secret](http://localhost:7900/?autoconnect=1&resize=scale&password=secret)
+
+![Live Browser View](./demo.png "Live Browser View")
 
 ---
 
@@ -139,3 +153,4 @@ GitHub Actions workflow is provided in `.github/workflows/ci.yml` to automate te
 
 - Always use your machine's IP address for `FRONTEND_URL` and `NEXT_PUBLIC_API_URL` when running Selenium tests remotely.
 - The backend tests use Selenium to interact with the frontend, so both must be running and accessible.
+- You can visually monitor Selenium test execution at [http://localhost:7900/?autoconnect=1&resize=scale&password=secret](http://localhost:7900/?autoconnect=1&resize=scale&password=secret) when using the provided Docker setup.

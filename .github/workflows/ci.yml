@@ -71,4 +71,5 @@ jobs:
           echo "FRONTEND_URL: $FRONTEND_URL"
 
           cd backend
-          python manage.py test
+          FRONTEND_URL=$FRONTEND_URL python manage.py test
+          echo "Tests finished."

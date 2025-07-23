@@ -3,10 +3,13 @@ from utils.test import AppLiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver import Remote, FirefoxOptions
 from .models import Task
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+from selenium.webdriver.remote.file_detector import LocalFileDetector
+
 
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 
@@ -19,11 +22,16 @@ class TaskTests(AppLiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        options = Options()
-        if os.environ.get('SELENIUM_HEADLESS') == 'True':
-            options.add_argument('--headless')
+        if os.environ.get("WEBDRIVER") == "REMOTE":
+            cls.selenium = Remote(command_executor="http://localhost:4444/wd/hub", options=FirefoxOptions())
+        else:
+            options = Options()
+            if os.environ.get("SELENIUM_HEADLESS") == "True":
+                options.add_argument("--headless")
 
-        cls.selenium = WebDriver(options)
+            cls.selenium = WebDriver(options)
+
+        cls.selenium.file_detector = LocalFileDetector()
         cls.selenium.implicitly_wait(10)
         cls.selenium.set_window_size(1920, 1080)
 

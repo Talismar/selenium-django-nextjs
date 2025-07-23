@@ -11,6 +11,13 @@ on:
 jobs:
   selenium-tests:
     runs-on: ubuntu-latest
+    services:
+      selenium:
+        image: selenium/standalone-firefox
+        options: --shm-size 2gb
+        ports:
+          - 4444:4444
+          - 7900:7900
 
     steps:
       - name: Checkout code
@@ -65,6 +72,8 @@ jobs:
       - name: Run selenium tests
         env:
           HOST_IP: ${{ env.HOST_IP }}
+          WEBDRIVER: "REMOTE"
+          SELENIUM_HEADLESS: "True"
         run: |
           echo "Running tests..."
           export FRONTEND_URL="http://$HOST_IP:3000"

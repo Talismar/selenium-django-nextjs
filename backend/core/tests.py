@@ -8,8 +8,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+
+
 class TaskTests(AppLiveServerTestCase):
-    FRONTEND_URL = "http://localhost:3000"
+    FRONTEND_URL = FRONTEND_URL
     port = 8000
     
     @classmethod

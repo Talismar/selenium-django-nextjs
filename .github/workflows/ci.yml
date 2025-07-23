@@ -63,6 +63,10 @@ jobs:
           echo "Frontend started."
 
       - name: Run selenium tests
+        env:
+          HOST_IP: ${{ env.HOST_IP }}
         run: |
+          echo "Running tests..."
+          export FRONTEND_URL="http://$HOST_IP:3000"
           cd backend
           python manage.py test

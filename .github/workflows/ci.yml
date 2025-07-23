@@ -1,48 +1,68 @@
-name: Run Selenium Tests
+name: CI Selenium Tests | Django/NextJS
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   selenium-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
 
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
 
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
 
-    - name: Start frontend
-      run: |
-        cd frontend
-        npm run start &
+      - name: Get private IP
+        id: get_ip
+        run: |
+          PRIVATE_IP=$(hostname -I | awk '{print $1}')
+          echo "Private IP resolved: $PRIVATE_IP"
+          echo "HOST_IP=$PRIVATE_IP" >> $GITHUB_ENV
+
+      - name: Start frontend
+        env:
+          HOST_IP: ${{ env.HOST_IP }}
+        run: |
+          echo "Starting frontend with environment variables..."
+          export NEXT_PUBLIC_API_URL="http://$HOST_IP:8000"
+
+          echo "NEXT_PUBLIC_API_URL: $NEXT_PUBLIC_API_URL"
+
+          cd frontend
+          npm run start &
+          echo "Frontend started."
+
+      - name: Run selenium tests
+        run: |
+          cd backend
+          python manage.py test

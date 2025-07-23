@@ -1,3 +1,4 @@
 Django==4.2
 djangorestframework==3.15.2
 selenium==4.27.1
+django-cors-headers==4.7.0

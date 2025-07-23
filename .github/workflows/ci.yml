@@ -16,16 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10.12"
-
-      - name: Install backend dependencies
+      - name: Get private IP
+        id: get_ip
         run: |
-          cd backend
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          PRIVATE_IP=$(hostname -I | awk '{print $1}')
+          echo "Private IP resolved: $PRIVATE_IP"
+          echo "HOST_IP=$PRIVATE_IP" >> $GITHUB_ENV
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -42,13 +38,6 @@ jobs:
           cd frontend
           npm run build
 
-      - name: Get private IP
-        id: get_ip
-        run: |
-          PRIVATE_IP=$(hostname -I | awk '{print $1}')
-          echo "Private IP resolved: $PRIVATE_IP"
-          echo "HOST_IP=$PRIVATE_IP" >> $GITHUB_ENV
-
       - name: Start frontend
         env:
           HOST_IP: ${{ env.HOST_IP }}
@@ -61,6 +50,17 @@ jobs:
           cd frontend
           npm run dev &
           echo "Frontend started."
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10.12"
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run selenium tests
         env:

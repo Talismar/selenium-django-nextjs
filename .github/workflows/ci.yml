@@ -59,7 +59,7 @@ jobs:
           echo "NEXT_PUBLIC_API_URL: $NEXT_PUBLIC_API_URL"
 
           cd frontend
-          npm run start &
+          npm run dev &
           echo "Frontend started."
 
       - name: Run selenium tests
@@ -68,5 +68,7 @@ jobs:
         run: |
           echo "Running tests..."
           export FRONTEND_URL="http://$HOST_IP:3000"
+          echo "FRONTEND_URL: $FRONTEND_URL"
+
           cd backend
           python manage.py test
